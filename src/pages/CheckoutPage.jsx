@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Input, Chip } from '@heroui/react';
 import { MapPin, CreditCard, Smartphone, Wallet, Shield, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import StripePayment from '../components/StripePayment';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const STEPS = ['Address', 'Payment', 'Confirmation'];
 
@@ -12,6 +17,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState('upi');
   const [placed, setPlaced] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
   const [form, setForm] = useState({
     firstName: '', lastName: '', email: '', phone: '',
     address: '', city: '', state: '', pincode: '',
@@ -22,10 +28,31 @@ export default function CheckoutPage() {
 
   const handleFormChange = (key, val) => setForm(prev => ({ ...prev, [key]: val }));
 
-  const handlePlaceOrder = async () => {
+  const fetchPaymentIntent = async () => {
+    try {
+      const res = await fetch('/api/payment/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: finalTotal, currency: 'lkr' })
+      });
+      const data = await res.json();
+      setClientSecret(data.clientSecret);
+    } catch (err) {
+      console.error('Error fetching payment intent:', err);
+    }
+  };
+
+  const handleNextToStep2 = () => {
+    if (paymentMethod === 'card') {
+      fetchPaymentIntent();
+    }
+    setStep(2);
+  };
+
+  const handlePlaceOrder = async (paymentId = null) => {
     try {
       const userId = localStorage.getItem('lubrimax-userId');
-      await fetch('http://localhost:5000/api/orders', {
+      await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -33,7 +60,8 @@ export default function CheckoutPage() {
           items: cart.items,
           shippingAddress: form,
           paymentMethod,
-          totalAmount: finalTotal
+          totalAmount: finalTotal,
+          paymentId
         })
       });
       setPlaced(true);
@@ -221,10 +249,10 @@ export default function CheckoutPage() {
                   <Button variant="bordered" className="border-white/20 text-gray-400" onPress={() => setStep(0)}>Back</Button>
                   <Button
                     fullWidth size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold"
-                    onPress={() => setStep(2)}
+                    onPress={handleNextToStep2}
                     id="checkout-next-payment"
                   >
-                    Review Order
+                    {paymentMethod === 'card' ? 'Continue to Card Payment' : 'Review Order'}
                   </Button>
                 </div>
               </div>
@@ -255,18 +283,28 @@ export default function CheckoutPage() {
                   <div className="text-gray-400">📞 {form.phone}</div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button variant="bordered" className="border-white/20 text-gray-400" onPress={() => setStep(1)}>Back</Button>
-                  <Button
-                    fullWidth size="lg"
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-xl shadow-green-500/20"
-                    startContent={<CheckCircle2 className="w-5 h-5" />}
-                    onPress={handlePlaceOrder}
-                    id="place-order-btn"
-                  >
-                    Place Order · LKR {finalTotal.toLocaleString()}
-                  </Button>
-                </div>
+                {paymentMethod === 'card' && clientSecret ? (
+                  <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night' } }}>
+                    <StripePayment 
+                      amount={finalTotal} 
+                      onSuccess={(paymentId) => handlePlaceOrder(paymentId)} 
+                      onCancel={() => setStep(1)} 
+                    />
+                  </Elements>
+                ) : (
+                  <div className="flex gap-3">
+                    <Button variant="bordered" className="border-white/20 text-gray-400" onPress={() => setStep(1)}>Back</Button>
+                    <Button
+                      fullWidth size="lg"
+                      className="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold shadow-xl shadow-green-500/20"
+                      startContent={<CheckCircle2 className="w-5 h-5" />}
+                      onPress={() => handlePlaceOrder()}
+                      id="place-order-btn"
+                    >
+                      Place Order · LKR {finalTotal.toLocaleString()}
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </div>

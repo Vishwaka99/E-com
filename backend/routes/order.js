@@ -6,7 +6,7 @@ const Cart = require('../models/Cart');
 // Place a new order
 router.post('/', async (req, res) => {
   try {
-    const { userId, items, shippingAddress, paymentMethod, totalAmount } = req.body;
+    const { userId, items, shippingAddress, paymentMethod, totalAmount, paymentId } = req.body;
     
     // Create new order
     const newOrder = new Order({
@@ -14,7 +14,8 @@ router.post('/', async (req, res) => {
       items,
       shippingAddress,
       paymentMethod,
-      totalAmount
+      totalAmount,
+      paymentId
     });
     
     const savedOrder = await newOrder.save();

@@ -53,7 +53,7 @@ export function CartProvider({ children }) {
 
   // Load from MongoDB on mount
   useEffect(() => {
-    fetch(`http://localhost:5000/api/cart/${userId}`)
+    fetch(`/api/cart/${userId}`)
       .then(res => res.json())
       .then(data => {
         if (data && data.items) {
@@ -71,7 +71,7 @@ export function CartProvider({ children }) {
   useEffect(() => {
     if (!isInitialized) return; // Prevent overwriting cart before loading it
 
-    fetch(`http://localhost:5000/api/cart/${userId}`, {
+    fetch(`/api/cart/${userId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items: state.items })

@@ -305,7 +305,7 @@ export default function HomePage() {
       </section> */}
 
       {/* Testimonials */}
-      <section className="py-20 bg-[#0a0a0f]">
+      {/* <section className="py-20 bg-[#0a0a0f]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <Chip size="sm" className="mb-4 bg-orange-500/10 text-orange-500 border border-orange-500/30">Testimonials</Chip>
@@ -338,7 +338,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA Section */}
       <section className="py-20 relative overflow-hidden">
