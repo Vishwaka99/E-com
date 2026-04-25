@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Cart = require('../models/Cart');
+const Cart = require('../models/Cart.cjs');
 
 // Get cart by userId
 router.get('/:userId', async (req, res) => {

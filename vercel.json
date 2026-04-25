@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/backend/server.js"
+      "destination": "/backend/server.cjs"
     },
     {
       "source": "/(.*)",
@@ -11,8 +11,9 @@
     }
   ],
   "functions": {
-    "backend/server.js": {
-      "runtime": "vercel-node@latest"
+    "backend/server.cjs": {
+      "runtime": "vercel-node@latest",
+      "includeFiles": "backend/**"
     }
   }
 }

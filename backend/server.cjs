@@ -22,9 +22,9 @@ if (MONGODB_URI) {
 }
 
 // Routes
-const cartRoutes = require('./routes/cart');
-const orderRoutes = require('./routes/order');
-const paymentRoutes = require('./routes/payment');
+const cartRoutes = require('./routes/cart.cjs');
+const orderRoutes = require('./routes/order.cjs');
+const paymentRoutes = require('./routes/payment.cjs');
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
