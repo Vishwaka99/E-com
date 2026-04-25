@@ -22,9 +22,9 @@ if (MONGODB_URI) {
 }
 
 // Routes
-const cartRoutes = require('./routes/cart.cjs');
-const orderRoutes = require('./routes/order.cjs');
-const paymentRoutes = require('./routes/payment.cjs');
+const cartRoutes = require('./routes/cart');
+const orderRoutes = require('./routes/order');
+const paymentRoutes = require('./routes/payment');
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', paymentRoutes);
@@ -35,10 +35,6 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
-}
-
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

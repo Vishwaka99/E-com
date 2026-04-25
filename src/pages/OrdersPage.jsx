@@ -17,7 +17,7 @@ export default function OrdersPage() {
       return;
     }
 
-    fetch(`/api/orders/${userId}`)
+    fetch(`http://localhost:5000/api/orders/${userId}`)
       .then(res => res.json())
       .then(data => {
         setOrders(data);
