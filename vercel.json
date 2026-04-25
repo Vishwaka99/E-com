@@ -4,15 +4,15 @@
     {
       "source": "/api/(.*)",
       "destination": "/backend/server.cjs"
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
     },
     {
-      "source": "/(.*)",
-      "destination": "/$1",
-      "continue": true
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/.*",
+      "dest": "/index.html"
     }
   ],
   "functions": {
