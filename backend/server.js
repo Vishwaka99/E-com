@@ -13,14 +13,13 @@ app.use(express.json());
 // Connect to MongoDB Atlas
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  console.error("FATAL ERROR: MONGODB_URI is not defined in .env file.");
-  process.exit(1);
+if (MONGODB_URI) {
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log('Connected to MongoDB Atlas'))
+    .catch((err) => console.error('MongoDB connection error:', err));
+} else {
+  console.warn("WARNING: MONGODB_URI is not defined. Database features will fail.");
 }
-
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((err) => console.error('MongoDB connection error:', err));
 
 // Routes
 const cartRoutes = require('./routes/cart');
