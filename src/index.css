@@ -1,13 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --primary: #1a1a2e;
-  --secondary: #ff6b35;
-  --accent: #e63946;
-  --surface: #16213e;
-  --text: #f0f0f0;
+@source "../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+
+@theme {
+  --font-sans: 'Inter', sans-serif;
+}
+
+@layer base {
+  :root {
+    --primary: #1a1a2e;
+    --secondary: #ff6b35;
+    --accent: #e63946;
+    --surface: #16213e;
+    --text: #f0f0f0;
+  }
 }
 
 * {
