@@ -13,40 +13,13 @@ app.use(express.json());
 // Connect to MongoDB Atlas
 const MONGODB_URI = process.env.MONGODB_URI;
 
-let cachedConnection = null;
-
-async function connectToDatabase() {
-  if (cachedConnection) {
-    return cachedConnection;
-  }
-
-  if (!MONGODB_URI) {
-    console.warn("WARNING: MONGODB_URI is not defined. Database features will fail.");
-    return null;
-  }
-
-  try {
-    const opts = {
-      bufferCommands: false,
-    };
-    cachedConnection = await mongoose.connect(MONGODB_URI, opts);
-    console.log('Connected to MongoDB Atlas');
-    return cachedConnection;
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
-    throw err;
-  }
+if (MONGODB_URI) {
+  mongoose.connect(MONGODB_URI)
+    .then(() => console.log('Connected to MongoDB Atlas'))
+    .catch((err) => console.error('MongoDB connection error:', err));
+} else {
+  console.warn("WARNING: MONGODB_URI is not defined. Database features will fail.");
 }
-
-// Middleware to ensure DB connection
-app.use(async (req, res, next) => {
-  try {
-    await connectToDatabase();
-    next();
-  } catch (err) {
-    res.status(500).json({ error: 'Database connection failed' });
-  }
-});
 
 // Routes
 const cartRoutes = require('./routes/cart');

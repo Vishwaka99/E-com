@@ -30,7 +30,7 @@ export default function CheckoutPage() {
 
   const fetchPaymentIntent = async () => {
     try {
-      const res = await fetch('/api/payment/create-payment-intent', {
+      const res = await fetch('http://localhost:5000/api/payment/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: finalTotal, currency: 'lkr' })
@@ -52,7 +52,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async (paymentId = null) => {
     try {
       const userId = localStorage.getItem('lubrimax-userId');
-      await fetch('/api/orders', {
+      await fetch('http://localhost:5000/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
